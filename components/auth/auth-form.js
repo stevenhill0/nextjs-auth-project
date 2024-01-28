@@ -1,29 +1,79 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import classes from './auth-form.module.css';
 
+// Best practice to create this function i another file
+const createUser = async (email, password) => {
+  const response = await fetch('api/auth/signup', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  //  response returns a promise
+  const data = await response.json();
+
+  // Check if the response is NOT Okay
+  if (!response.ok) {
+    throw new Error(data.message || 'Something went wrong! Please try again.');
+  }
+
+  return data;
+};
+
 function AuthForm() {
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
 
   function switchAuthModeHandler() {
     setIsLogin((prevState) => !prevState);
   }
 
+  // Because createUser returns a promise, we can also use async await here to await the result from the createUser function
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Getting the input form values form the refs via useRef
+    const enteredEmail = emailInputRef.current.value;
+    const enteredPassword = passwordInputRef.current.value;
+
+    // optional: add validation
+
+    if (isLogin) {
+      //login
+    } else {
+      try {
+        const result = await createUser(enteredEmail, enteredPassword);
+
+        console.log(result);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <section className={classes.auth}>
       <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
-      <form>
+      {/* Connecting the submit handler to the form */}
+      <form onSubmit={handleSubmit}>
         <div className={classes.control}>
-          <label htmlFor='email'>Your Email</label>
-          <input type='email' id='email' required />
+          <label htmlFor="email">Your Email</label>
+          <input type="email" id="email" required ref={emailInputRef} />
         </div>
         <div className={classes.control}>
-          <label htmlFor='password'>Your Password</label>
-          <input type='password' id='password' required />
+          <label htmlFor="password">Your Password</label>
+          <input
+            type="password"
+            id="password"
+            required
+            ref={passwordInputRef}
+          />
         </div>
         <div className={classes.actions}>
           <button>{isLogin ? 'Login' : 'Create Account'}</button>
           <button
-            type='button'
+            type="button"
             className={classes.toggle}
             onClick={switchAuthModeHandler}
           >
