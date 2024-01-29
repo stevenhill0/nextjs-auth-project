@@ -1,5 +1,8 @@
 import { useRef, useState } from 'react';
 import classes from './auth-form.module.css';
+// Call the signIn function to send a sign in request
+// The request is called automatically
+import { signIn, useSession } from 'next-auth/react'; // module path CHANGED after NextAuth version 14+ i.e. 'next-auth/react'
 
 // Best practice to create this function i another file
 const createUser = async (email, password) => {
@@ -40,7 +43,20 @@ function AuthForm() {
     // optional: add validation
 
     if (isLogin) {
-      //login
+      //SignIn 1st argument describes the Provider for which we want to sign in with e.g. Apple. We using the local credentials provider
+      // SignIn 2nd argument: configuration object
+      // redirect = false because by default NextAuth redirects to another page. Normally if there is an ERROR we would want to stay on the page and then SHOW the error to the user
+      // When setting redirect to false signIn returns a Promise which yields a result: if we had an error, result will contain data about the error. If not error result will still contain an object, but WITHOUT ERROR DATA
+
+      // NB NOTE 1.1: The 2nd argument i.e. the configure object is what is PASSED to the credentials parameter in the authorize function ([...nextauth].js file)
+      // NB NOTE 1.2: And because we are passing the EMAIL and the PASSWORD from the FORM we MUST set them here
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: enteredEmail,
+        password: enteredPassword,
+      });
+
+      console.log(result);
     } else {
       try {
         const result = await createUser(enteredEmail, enteredPassword);

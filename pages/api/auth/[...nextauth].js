@@ -1,7 +1,7 @@
-import NextAuth from 'next-auth';
-import Providers from 'next-auth/providers';
-import { connectToDatabase } from '../../lib/db';
-import { verifyPassword } from '../../lib/auth';
+import NextAuth from 'next-auth/next';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { connectToDatabase } from '../../../lib/db';
+import { verifyPassword } from '../../../lib/auth';
 // NextAuth is a function which we can CALL
 // When called it returns a HANDLER function. It needs to because this is still an API route. An API D route needs to export a function
 // When calling NExtAuth we pass a CONFIGURATION object
@@ -17,7 +17,7 @@ export default NextAuth({
     // The provider option gives a list of the various providers we can choose from e.g. Apple
     // We are using credentials option which means we are manually setting it using local email and password
     // Credentials takes a configuration object itself
-    Providers.Credentials({
+    CredentialsProvider({
       // Credentials lets NextAuth to setup a log in form for us, IF NEEDED. Do NOT need it have own form
       // Credentials:{}
 
@@ -43,7 +43,8 @@ export default NextAuth({
         // When throwing an error NextAuth will REJECT the Promise it generates and by DEFAULT wil REDIRECT the client to another page.
         // We can overwrite redirecting to rather stay on the page
         if (!user) {
-          throw new Error('Invalid credentials');
+          client.close();
+          throw new Error('No user found!');
         }
 
         // * 3) Check if PASSWORD is correct
