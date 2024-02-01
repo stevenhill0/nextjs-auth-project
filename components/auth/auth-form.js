@@ -2,7 +2,8 @@ import { useRef, useState } from 'react';
 import classes from './auth-form.module.css';
 // Call the signIn function to send a sign in request
 // The request is called automatically
-import { signIn, useSession } from 'next-auth/react'; // module path CHANGED after NextAuth version 14+ i.e. 'next-auth/react'
+import { signIn } from 'next-auth/react'; // module path CHANGED after NextAuth version 14+ i.e. 'next-auth/react'
+import { useRouter } from 'next/router';
 
 // Best practice to create this function i another file
 const createUser = async (email, password) => {
@@ -24,6 +25,7 @@ const createUser = async (email, password) => {
 };
 
 function AuthForm() {
+  const router = useRouter();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
@@ -56,12 +58,16 @@ function AuthForm() {
         password: enteredPassword,
       });
 
-      console.log(result);
+      // If not error during authorization
+      if (!result.error) {
+        // Best NOT to use window.location.href to redirect because it RESETS the application
+        // window.location.href is fine for an initial page load. But if we have already worked in the app we do NOT want to reset the app lose ALL out STATE
+        // Rather use the useRouter hook from 'next/router'
+        router.replace('/profile'); // replace will redirect us by replacing hte URL with a different one
+      }
     } else {
       try {
         const result = await createUser(enteredEmail, enteredPassword);
-
-        console.log(result);
       } catch (error) {
         console.log(error);
       }
