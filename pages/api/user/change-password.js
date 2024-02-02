@@ -9,10 +9,10 @@ const handler = async (req, res) => {
   const session = await getSession({ req: req });
 
   //*   2) This if statement protects use from unauthorized access
-  // if (!session) {
-  //   res.status(401).json({ error: 'Unauthorized!' });
-  //   return;
-  // }
+  if (!session) {
+    res.status(401).json({ error: 'Unauthorized!' });
+    return;
+  }
 
   //   Everything below this is not directly to do with authentication
 
