@@ -31,10 +31,24 @@ function UserProfile() {
   //   return <p className={classes.profile}>Loading...</p>;
   // }
 
+  // Changing the password via the http request
+  const handleChangePassword = async (passwordData) => {
+    // We expect to get a PATCH request: see change-password.js
+    const response = await fetch('/api/user/change-password', {
+      method: 'PATCH',
+      body: JSON.stringify(passwordData),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+  };
+
   return (
     <section className={classes.profile}>
       <h1>Your User Profile</h1>
-      <ProfileForm />
+      <ProfileForm onChangePassword={handleChangePassword} />
     </section>
   );
 }

@@ -9,10 +9,10 @@ const handler = async (req, res) => {
   const session = await getSession({ req: req });
 
   //*   2) This if statement protects use from unauthorized access
-  if (!session) {
-    res.status(401).json({ error: 'Unauthorized' });
-    return;
-  }
+  // if (!session) {
+  //   res.status(401).json({ error: 'Unauthorized!' });
+  //   return;
+  // }
 
   //   Everything below this is not directly to do with authentication
 
@@ -31,7 +31,7 @@ const handler = async (req, res) => {
   const usersCollection = client.db().collection('users');
 
   //* 5.3) Getting the user from the DB
-  const user = usersCollection.findOne({ email: userEmail });
+  const user = await usersCollection.findOne({ email: userEmail });
 
   //* 5.4) Checking if there is a user
   if (!user) {
@@ -56,11 +56,11 @@ const handler = async (req, res) => {
   }
 
   //* 5.8) Encrypting password from custom function
-  const hashedPassword = hashPassword(newPassword);
+  const hashedPassword = await hashPassword(newPassword);
 
   //* 6) Updating one document
   //   updateOne: 2nd argument: describing the update
-  usersCollection.updateOne(
+  const result = await usersCollection.updateOne(
     { email: userEmail },
     // Using mongoDB $set, telling it want to set the new password
     // Note: The password field in the DB must already exist. If  it does NOT exist, a new field will be created
