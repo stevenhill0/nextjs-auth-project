@@ -1,4 +1,5 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '../../../lib/db';
 import { verifyPassword, hashPassword } from '../../../lib/auth';
 
@@ -6,7 +7,7 @@ const handler = async (req, res) => {
   if (req.method !== 'PATCH') return;
 
   //*   1) Checking if there is an active session
-  const session = await getSession({ req: req });
+  const session = await getServerSession(req, res, authOptions);
 
   //*   2) This if statement protects use from unauthorized access
   if (!session) {

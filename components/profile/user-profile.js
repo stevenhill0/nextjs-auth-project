@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import ProfileForm from './profile-form';
 import classes from './user-profile.module.css';
 import { useState } from 'react';
-import { getSession } from 'next-auth/react';
+// import { getSession } from 'next-auth/react';
 
 function UserProfile() {
   // // Managing loading state

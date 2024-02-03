@@ -1,15 +1,13 @@
-import NextAuth from 'next-auth/next';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { connectToDatabase } from '../../../lib/db';
 import { verifyPassword } from '../../../lib/auth';
-// NextAuth is a function which we can CALL
-// When called it returns a HANDLER function. It needs to because this is still an API route. An API D route needs to export a function
-// When calling NExtAuth we pass a CONFIGURATION object
-export default NextAuth({
-  // To male sure a JSON WEB TOKEN is CREATED we use the sessions option
+
+export const authOptions = {
+  // To make sure a JSON WEB TOKEN is CREATED we use the sessions option
   //   session is an object were we configure how a session for an authenticated user is MANAGED
   session: {
-    // THe JSON web token key should be set to TRUE, so that json web tokens are being used
+    // The JSON web token key should be set to TRUE, so that json web tokens are being used
     jwt: true,
   },
   // providers option
@@ -78,4 +76,10 @@ export default NextAuth({
       },
     }),
   ],
-});
+  secret: process.env.NEXTAUTH_SECRET,
+};
+
+// NextAuth is a function which we can CALL
+// When called it returns a HANDLER function. It needs to because this is still an API route. An API D route needs to export a function
+// When calling NExtAuth we pass a CONFIGURATION object
+export default NextAuth(authOptions);
